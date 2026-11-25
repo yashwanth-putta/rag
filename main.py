@@ -1,6 +1,7 @@
 import logging
 import sys
 from src.ingestion.pipeline import DocumentIngestionPipeline
+from src.inference.pipeline import InferencePipeline
 import asyncio
 
 def setup_logging(level: str = "INFO") -> None:
@@ -22,8 +23,28 @@ def setup_logging(level: str = "INFO") -> None:
     
 async def main() -> None:
     setup_logging("INFO")
-    ingestion_pipeline = DocumentIngestionPipeline()
-    await ingestion_pipeline.ingest_file("knowledge-factory/rag-basics.txt")
+    # ingestion_pipeline = DocumentIngestionPipeline()
+    # await ingestion_pipeline.ingest_file("knowledge-factory/rag-basics.txt")
+    pipeline = InferencePipeline()
+    print("Interactive RAG Inference ready. Type your query and press Enter (type 'exit' or 'quit' to stop).\n")
+
+    while True:
+        try:
+            query = input("Query> ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\nExiting.")
+            break
+
+        if not query:
+            continue
+
+        if query.lower() in {"exit", "quit"}:
+            print("Exiting.")
+            break
+
+        answer = await pipeline.run(query)
+        if answer:
+            print(f"\nAnswer:\n{answer}\n")
 
 
 if __name__ == "__main__":

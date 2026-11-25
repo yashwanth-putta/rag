@@ -16,3 +16,5 @@ class Settings(BaseSettings):
     api_key: SecretStr | None = None
     OLLAMA_EMBEDDING_MODEL: str = "qwen3-embedding:0.6b"
     VECTOR_STORE_DIRECTORY: str = "embeddings-store"
+    TOP_K: int = Field(default=3, gt=0)
+    OLLAMA_LLM: str = "qwen2.5:7b"
