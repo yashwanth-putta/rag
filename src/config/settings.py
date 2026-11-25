@@ -18,3 +18,5 @@ class Settings(BaseSettings):
     VECTOR_STORE_DIRECTORY: str = "embeddings-store"
     TOP_K: int = Field(default=3, gt=0)
     OLLAMA_LLM: str = "qwen2.5:7b"
+    GROUND_TRUTH_LOCATION: str = "ground-truth/rag-basics-ground.json"
+    OLLAMA_JUDGE_MODEL: str = "qwen3:14b"

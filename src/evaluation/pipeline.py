@@ -1,26 +1,46 @@
-import logging
-from pydantic import BaseModel, Field, TypeAdapter, ConfigDict
-from src.config.settings import Settings
-from ollama import AsyncClient
-from typing import Literal, Any
 import asyncio
-from pathlib import Path
 import json
+import logging
+from pathlib import Path
+from typing import Any, Literal
+
+from ollama import AsyncClient
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
+
+from src.config.settings import Settings
 from src.inference.pipeline import InferencePipeline
 
 logger = logging.getLogger(__name__)
 
+
 class GroundTruthCase(BaseModel):
     model_config = ConfigDict(extra="allow")
 
-    query: str
+    id: str | None = None
+    question: str | None = None
+    query: str | None = None
+    ground_truth_answer: str | None = None
     ground_truth: str | None = None
+    relevant_chunk_ids: list[str] = Field(default_factory=list)
+    retrieval_context: str | None = None
     expected_chunks: list[str] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
-class MetricJudgement(BaseModel):
+    @property
+    def effective_query(self) -> str:
+        q = self.question or self.query
+        if not q:
+            raise ValueError("GroundTruthCase must contain either 'question' or 'query'.")
+        return q
+
+    @property
+    def effective_ground_truth(self) -> str | None:
+        return self.ground_truth_answer or self.ground_truth
+
+
+class MetricJudgment(BaseModel):
     reasoning: str = Field(
-        description = "Step-by-step analysis of evidence before assigning final score."
+        description="Step-by-step analysis of evidence before assigning the final score."
     )
     score: int = Field(
         ge=1,
@@ -31,17 +51,20 @@ class MetricJudgement(BaseModel):
         description="True if the evaluation meets the passing threshold (>= 4), False otherwise."
     )
 
+
 class RAGEvaluationReport(BaseModel):
     query: str
     faithfulness: MetricJudgment
     answer_relevance: MetricJudgment
     context_relevance: MetricJudgment
 
+
 class EvaluationPipeline:
     def __init__(self, judge_model: str | None = None) -> None:
         self.settings = Settings()
-        # Falls back to OLLAMA_LLM if you haven't added a separate OLLAMA_JUDGE_MODEL setting
-        self.model = judge_model or getattr(self.settings, "OLLAMA_JUDGE_MODEL", self.settings.OLLAMA_LLM)
+        self.model = judge_model or getattr(
+            self.settings, "OLLAMA_JUDGE_MODEL", self.settings.OLLAMA_LLM
+        )
         self.client = AsyncClient()
         self.inference = InferencePipeline()
 
@@ -153,21 +176,16 @@ class EvaluationPipeline:
             context_relevance=context_relevance,
         )
 
-    # _CASE_LIST_ADAPTER = TypeAdapter(list[GroundTruthCase])
-
-    async def run_evaluation(self):
-    # Load the ground truth and loop through each item
-        file_path = self.settings.GROUND_TRUTH_LOCATION
-        path = Path(file_path)
+    async def run_evaluation(self) -> list[RAGEvaluationReport]:
+        project_root = Path(__file__).resolve().parents[2]
+        raw_path = Path(self.settings.GROUND_TRUTH_LOCATION)
+        path = raw_path if raw_path.is_absolute() else (project_root / raw_path)
         if not path.exists():
             raise FileNotFoundError(f"Ground truth file not found: {path}")
+
         with open(path, "r", encoding="utf-8") as f:
             raw_data = json.load(f)
-        
 
-
-    # Use the inference pipeline to get chunks and answer and call the evaluate method
-    # Supports either a top-level list of test cases or {"cases": [...]} / {"test_cases": [...]}
         if isinstance(raw_data, list):
             items = raw_data
         elif isinstance(raw_data, dict):
@@ -182,26 +200,52 @@ class EvaluationPipeline:
                 )
         else:
             raise ValueError(f"Unsupported JSON root type in {path}: {type(raw_data).__name__}")
-        _CASE_LIST_ADAPTER = TypeAdapter(list[GroundTruthCase])
-        ground_truth_items = _CASE_LIST_ADAPTER.validate_python(items)
 
+        case_adapter = TypeAdapter(list[GroundTruthCase])
+        ground_truth_items = case_adapter.validate_python(items)
+
+        reports: list[RAGEvaluationReport] = []
 
         for idx, case in enumerate(ground_truth_items, start=1):
-            print(f"\n--- Case {idx}: {case.query} ---")
-            results = await self.inference.get_chunks(case.query)
-            
+            q = case.effective_query
+            gt_answer = case.effective_ground_truth
+            print(f"\n--- Evaluating Case {idx}/{len(ground_truth_items)}: {q} ---")
+
+            # 1. Fetch chunks & format top K context
+            results = await self.inference.get_chunks(q)
             top_results = results[: self.settings.TOP_K]
-            logger.info("%s", top_results)
-            context = [item["chunk"] for item in top_results]
+            logger.info("Top results for query '%s': %s", q, top_results)
+
+            context = [item["chunk"] for item in top_results if isinstance(item, dict) and "chunk" in item]
             chunks: list[str] = [
                 str(item["chunk"])
                 for item in top_results
                 if isinstance(item, dict) and item.get("chunk") is not None
             ]
 
-            answer = await self.inference.get_result(case.query, context)
-            for item in ground_truth_items:
-                query = item["question"]
-                gt_answer = item.get("ground_truth_answer")
-            await self.evaluate(case.query, chunks, answer, gt_answer)
+            # 2. Generate answer via inference pipeline
+            answer = await self.inference.get_result(q, context)
+
+            # 3. Evaluate generated answer & retrieved chunks against judge
+            report = await self.evaluate(
+                query=q,
+                chunks=chunks,
+                answer=answer or "",
+                ground_truth=gt_answer,
+            )
+            reports.append(report)
+
+            print(
+                f" Faithfulness Score:     {report.faithfulness.score}/5 (passed={report.faithfulness.passed})\n"
+                f" Answer Relevance Score: {report.answer_relevance.score}/5 (passed={report.answer_relevance.passed})\n"
+                f" Context Relevance Score:{report.context_relevance.score}/5 (passed={report.context_relevance.passed})"
+            )
+
+        return reports
+
+"""
+if __name__ == "__main__":
+    eval_pipeline = EvaluationPipeline()
+    asyncio.run(eval_pipeline.run_evaluation())
+"""
 
