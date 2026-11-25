@@ -1,0 +1,73 @@
+
+[
+  {
+    "id": "eval_001",
+    "question": "What is Retrieval-Augmented Generation (RAG)?",
+    "ground_truth_answer": "Retrieval-Augmented Generation (RAG) is an architectural pattern designed to enhance Large Language Model outputs by connecting them to external, domain-specific data sources at inference time.",
+    "relevant_chunk_ids": ["rag_chunk_0"],
+    "retrieval_context": "Retrieval-Augmented Generation (RAG) is an architectural pattern..."
+  },
+  {
+    "id": "eval_002",
+    "question": "Why do static Large Language Models generate hallucinations?",
+    "ground_truth_answer": "Static LLMs are prone to hallucinations because their internal knowledge is limited by training cutoff dates and lacks access to dynamic or external context.",
+    "relevant_chunk_ids": ["rag_chunk_0"],
+    "retrieval_context": "Retrieval-Augmented Generation (RAG) is an architectural pattern..."
+  },
+  {
+    "id": "eval_003",
+    "question": "What are the two primary phases of the RAG architecture?",
+    "ground_truth_answer": "The two primary phases of RAG architecture are data ingestion (indexing) and query synthesis (retrieval and generation).",
+    "relevant_chunk_ids": ["rag_chunk_1"],
+    "retrieval_context": "The RAG architecture functions through two primary phases..."
+  },
+  {
+    "id": "eval_004",
+    "question": "Why is granular chunking important during data ingestion?",
+    "ground_truth_answer": "Granular chunking is critical because if chunks are too large, irrelevant noise pollutes the context, and if they are too small, crucial contextual meaning is lost.",
+    "relevant_chunk_ids": ["rag_chunk_1"],
+    "retrieval_context": "The RAG architecture functions through two primary phases..."
+  },
+  {
+    "id": "eval_005",
+    "question": "What information is stored inside the vector database along with vector embeddings?",
+    "ground_truth_answer": "Along with vector embeddings, original text payloads and associated metadata (such as document IDs, tags, or timestamps) are stored in the vector database.",
+    "relevant_chunk_ids": ["rag_chunk_1"],
+    "retrieval_context": "The RAG architecture functions through two primary phases..."
+  },
+  {
+    "id": "eval_006",
+    "question": "Which similarity algorithms are commonly used for vector search in RAG?",
+    "ground_truth_answer": "Common similarity algorithms used for vector search include cosine similarity, dot product, and Euclidean distance.",
+    "relevant_chunk_ids": ["rag_chunk_2"],
+    "retrieval_context": "2. Retrieval & Generation\nWhen a user submits a query..."
+  },
+  {
+    "id": "eval_007",
+    "question": "How is an augmented prompt constructed during query synthesis?",
+    "ground_truth_answer": "An augmented prompt is constructed by combining the original user question, system instructions, and the top-k most semantically relevant text chunks returned by vector search.",
+    "relevant_chunk_ids": ["rag_chunk_2"],
+    "retrieval_context": "2. Retrieval & Generation\nWhen a user submits a query..."
+  },
+  {
+    "id": "eval_008",
+    "question": "How does RAG provide cost efficiency compared to fine-tuning?",
+    "ground_truth_answer": "RAG provides cost efficiency by injecting dynamic context via prompt engineering, which is substantially cheaper and faster than fine-tuning LLM model weights.",
+    "relevant_chunk_ids": ["rag_chunk_3"],
+    "retrieval_context": "Key Technical Benefits\n- Hallucination Mitigation..."
+  },
+  {
+    "id": "eval_009",
+    "question": "How does RAG enable auditability and provenance in LLM outputs?",
+    "ground_truth_answer": "RAG enables auditability and provenance because system outputs can cite exact source document IDs and metadata for transparent verification.",
+    "relevant_chunk_ids": ["rag_chunk_3"],
+    "retrieval_context": "Key Technical Benefits\n- Hallucination Mitigation..."
+  },
+  {
+    "id": "eval_010",
+    "question": "How can data security and access control be enforced in a RAG pipeline?",
+    "ground_truth_answer": "Data security is enforced using access control rules that filter vector database queries dynamically, ensuring users only retrieve information they are authorized to see.",
+    "relevant_chunk_ids": ["rag_chunk_3"],
+    "retrieval_context": "Key Technical Benefits\n- Hallucination Mitigation..."
+  }
+]
