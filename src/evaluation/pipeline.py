@@ -2,61 +2,17 @@ import asyncio
 import json
 import logging
 from pathlib import Path
-from typing import Any, Literal
+from typing import Literal
 
 from ollama import AsyncClient
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
-
+from pydantic import TypeAdapter
 from src.config.settings import Settings
 from src.inference.pipeline import InferencePipeline
+from src.evaluation.report import RAGEvaluationReportWriter
+from src.evaluation.schemas import GroundTruthCase, MetricJudgment, RAGEvaluationReport 
+
 
 logger = logging.getLogger(__name__)
-
-
-class GroundTruthCase(BaseModel):
-    model_config = ConfigDict(extra="allow")
-
-    id: str | None = None
-    question: str | None = None
-    query: str | None = None
-    ground_truth_answer: str | None = None
-    ground_truth: str | None = None
-    relevant_chunk_ids: list[str] = Field(default_factory=list)
-    retrieval_context: str | None = None
-    expected_chunks: list[str] = Field(default_factory=list)
-    metadata: dict[str, Any] = Field(default_factory=dict)
-
-    @property
-    def effective_query(self) -> str:
-        q = self.question or self.query
-        if not q:
-            raise ValueError("GroundTruthCase must contain either 'question' or 'query'.")
-        return q
-
-    @property
-    def effective_ground_truth(self) -> str | None:
-        return self.ground_truth_answer or self.ground_truth
-
-
-class MetricJudgment(BaseModel):
-    reasoning: str = Field(
-        description="Step-by-step analysis of evidence before assigning the final score."
-    )
-    score: int = Field(
-        ge=1,
-        le=5,
-        description="Rating from 1 (very poor) to 5 (excellent) based strictly on the rubric.",
-    )
-    passed: bool = Field(
-        description="True if the evaluation meets the passing threshold (>= 4), False otherwise."
-    )
-
-
-class RAGEvaluationReport(BaseModel):
-    query: str
-    faithfulness: MetricJudgment
-    answer_relevance: MetricJudgment
-    context_relevance: MetricJudgment
 
 
 class EvaluationPipeline:
@@ -240,6 +196,15 @@ class EvaluationPipeline:
                 f" Answer Relevance Score: {report.answer_relevance.score}/5 (passed={report.answer_relevance.passed})\n"
                 f" Context Relevance Score:{report.context_relevance.score}/5 (passed={report.context_relevance.passed})"
             )
+
+        # Export report to disk
+        writer = RAGEvaluationReportWriter(output_dir="evaluation_reports")
+        md_path = writer.write_markdown_report(reports)
+        json_path = writer.write_json_report(reports)
+
+        print(f"\nEvaluation complete!")
+        print(f"Markdown Report saved to: {md_path}")
+        print(f"JSON Report saved to:     {json_path}")
 
         return reports
 
