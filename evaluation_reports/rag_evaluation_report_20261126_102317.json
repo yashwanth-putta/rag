@@ -1,0 +1,182 @@
+[
+  {
+    "query": "What is Retrieval-Augmented Generation (RAG)?",
+    "faithfulness": {
+      "reasoning": "The generated answer accurately reflects information from the retrieved chunks without introducing fabricated claims or unsupported details. It directly mirrors the definition of RAG from Chunk 1, the limitations of LLMs, and the dynamic retrieval mechanism. All claims are explicitly supported by the retrieved context, with no hallucinations or extrapolations beyond the provided material.",
+      "score": 5,
+      "passed": true
+    },
+    "answer_relevance": {
+      "reasoning": "The answer directly defines RAG as an architectural pattern enhancing LLM outputs through external data sources, matching the reference ground truth. It further elaborates on addressing LLM limitations (static knowledge, inaccuracies) and explains the dynamic retrieval mechanism without retraining, providing additional context beyond the reference while remaining accurate. The response is comprehensive and directly answers the query.",
+      "score": 5,
+      "passed": true
+    },
+    "context_relevance": {
+      "reasoning": "All retrieved chunks are directly relevant to defining and explaining Retrieval-Augmented Generation (RAG). Chunk 1 provides a clear definition, core mechanics, and purpose of RAG. Chunk 2 elaborates on technical benefits like hallucination mitigation and auditability, which are critical to understanding RAG's value proposition. Chunk 3 details the operational workflow (query embedding, vector search, contextual prompt assembly), which explains how RAG functions. While Chunk 3 is slightly truncated, the content present is still focused on answering the query. No irrelevant or misleading information is present.",
+      "score": 5,
+      "passed": true
+    }
+  },
+  {
+    "query": "Why do static Large Language Models generate hallucinations?",
+    "faithfulness": {
+      "reasoning": "The answer directly quotes phrases from Chunk 2 ('prone to generating inaccurate or fabricated responses' and 'limited by their training cutoff dates') without adding any unsupported claims. All assertions about static LLMs and hallucinations are explicitly stated in the retrieved context. No hallucinations or contradictions are present.",
+      "score": 5,
+      "passed": true
+    },
+    "answer_relevance": {
+      "reasoning": "The generated answer correctly identifies that static LLMs have limited knowledge due to training cutoff dates, which aligns with the reference ground truth. However, it omits the critical point about 'lack of access to dynamic or external context' mentioned in the ground truth. While it addresses a key aspect, the missing element reduces its completeness.",
+      "score": 3,
+      "passed": false
+    },
+    "context_relevance": {
+      "reasoning": "Chunk 2 directly addresses the query by explaining that static LLMs are prone to hallucinations due to their limited training data cutoff dates. Chunk 1 mentions hallucination mitigation via RAG but doesn't explain why static models hallucinate. Chunk 3 focuses on RAG's operational mechanics without addressing the cause of hallucinations in static models. While Chunk 2 is highly relevant, the other chunks are tangential or irrelevant to the query's focus on the root cause of hallucinations in static models.",
+      "score": 3,
+      "passed": false
+    }
+  },
+  {
+    "query": "What are the two primary phases of the RAG architecture?",
+    "faithfulness": {
+      "reasoning": "The generated answer directly repeats the exact phrase 'data ingestion (indexing) and query synthesis (retrieval and generation)' from Chunk 1 without adding any unsupported claims or fabrications. All information is explicitly stated in the retrieved context, with no material hallucinations or reliance on outside knowledge.",
+      "score": 5,
+      "passed": true
+    },
+    "answer_relevance": {
+      "reasoning": "The generated answer exactly matches the reference ground truth, directly addressing both primary phases of the RAG architecture (data ingestion/indexing and query synthesis/retrieval and generation) without omission or error.",
+      "score": 5,
+      "passed": true
+    },
+    "context_relevance": {
+      "reasoning": "Chunk 1 explicitly states the two primary phases (data ingestion and query synthesis), directly answering the query. Chunk 3 discusses the 'Retrieval & Generation' workflow, which aligns with the query synthesis phase mentioned in Chunk 1, providing additional context. Chunk 2 focuses on technical benefits and does not mention the architecture phases, making it irrelevant. Most retrieved chunks (Chunks 1 and 3) are relevant to the query, while Chunk 2 is noise.",
+      "score": 4,
+      "passed": true
+    }
+  },
+  {
+    "query": "Why is granular chunking important during data ingestion?",
+    "faithfulness": {
+      "reasoning": "The generated answer accurately reflects the information in Chunk 1, which explicitly states that granular chunking is critical to avoid noise from large chunks and preserve context from small chunks. The answer uses slightly different phrasing ('important' vs 'critical,' 'may pollute' vs 'pollutes') but conveys the same meaning without adding or omitting any claims. No hallucinations or unsupported details are present.",
+      "score": 5,
+      "passed": true
+    },
+    "answer_relevance": {
+      "reasoning": "The generated answer directly addresses the query by explaining both consequences of improper chunking (noise from large chunks and lost context from small chunks). It uses slightly different phrasing ('may pollute' vs 'pollutes', 'might be lost' vs 'is lost') but accurately conveys the same core concepts as the reference ground truth. The answer is clear, concise, and fully relevant to the query without introducing extraneous information.",
+      "score": 4,
+      "passed": true
+    },
+    "context_relevance": {
+      "reasoning": "Chunk 1 directly addresses granular chunking's importance by explaining how improper chunk size leads to noise or lost context. Chunk 2 and 3 discuss RAG architecture and ingestion phases but do not explicitly explain why granular chunking matters. Only one chunk (Chunk 1) provides relevant information, while the others are either irrelevant or only tangentially related. This meets the 'some relevant information present, mixed with irrelevant chunks' criterion.",
+      "score": 3,
+      "passed": false
+    }
+  },
+  {
+    "query": "What information is stored inside the vector database along with vector embeddings?",
+    "faithfulness": {
+      "reasoning": "The generated answer directly restates information explicitly mentioned in the retrieved chunks (Chunk 1 and Chunk 2), which confirm that vector databases store 'original text payloads and associated metadata (such as document IDs, tags, or timestamps)' alongside vector embeddings. No unsupported claims, fabrications, or omissions are present.",
+      "score": 5,
+      "passed": true
+    },
+    "answer_relevance": {
+      "reasoning": "The generated answer accurately and thoroughly addresses the query by explicitly mentioning 'original text payloads and associated metadata such as document IDs, tags, or timestamps,' which directly matches the reference ground truth. The response is concise, clear, and fully aligns with the expected information.",
+      "score": 5,
+      "passed": true
+    },
+    "context_relevance": {
+      "reasoning": "Chunk 2 explicitly states that vector databases store 'vector embeddings, along with their original text payloads and associated metadata (such as document IDs, tags, or timestamps)'\u2014directly answering the query. Chunk 1 and 3 discuss retrieval workflows and benefits but do not address what is stored alongside embeddings. While Chunk 2 is highly relevant, the other chunks are not, resulting in a mix of relevant and irrelevant information.",
+      "score": 3,
+      "passed": false
+    }
+  },
+  {
+    "query": "Which similarity algorithms are commonly used for vector search in RAG?",
+    "faithfulness": {
+      "reasoning": "The answer correctly states that the retrieved context does not mention specific similarity algorithms (e.g., cosine similarity, dot product, Euclidean distance). The retrieved chunks (1, 2, 3) indeed contain no information about these algorithms, and the answer does not fabricate or contradict any claims in the context. The response is fully grounded in the absence of relevant information in the retrieved chunks.",
+      "score": 4,
+      "passed": true
+    },
+    "answer_relevance": {
+      "reasoning": "The generated answer claims the retrieved context does not mention any algorithms, but the user's query was standalone and did not provide context. The answer fails to address the question directly, instead stating an inability to answer due to missing context (which wasn't part of the user's input). It does not mention cosine similarity, dot product, or Euclidean distance, which are explicitly listed in the ground truth. The response is irrelevant to the query.",
+      "score": 1,
+      "passed": false
+    },
+    "context_relevance": {
+      "reasoning": "The retrieved chunks discuss RAG pipeline components like data ingestion, chunking, and embedding generation but do not mention specific similarity algorithms (e.g., cosine similarity, Euclidean distance) used in vector search. While they reference embeddings and vector spaces, this is tangential to the query about algorithms. The chunks are mostly noise with minimal overlap to the query.",
+      "score": 2,
+      "passed": false
+    }
+  },
+  {
+    "query": "How is an augmented prompt constructed during query synthesis?",
+    "faithfulness": {
+      "reasoning": "The generated answer precisely restates information directly from the retrieved chunks. Chunk 1 explicitly describes 'Contextual Prompt Assembly' as combining the original user question, system instructions, and retrieved document chunks. Chunk 3's 'Reference Ground Truth' also confirms this exact construction method. No unsupported claims, fabrications, or contradictions are present.",
+      "score": 5,
+      "passed": true
+    },
+    "answer_relevance": {
+      "reasoning": "The generated answer correctly identifies the three components of an augmented prompt (original user question, system instructions, retrieved document chunks) as stated in the reference ground truth. While the reference specifies 'top-k most semantically relevant text chunks returned by vector search,' the generated answer uses slightly different phrasing ('retrieved document chunks as grounded context'). This difference does not affect the core accuracy of the answer, which directly addresses the query's main components. The answer is clear and thorough, though not perfectly aligned in terminology.",
+      "score": 4,
+      "passed": true
+    },
+    "context_relevance": {
+      "reasoning": "Chunk 1 explicitly describes the 'Contextual Prompt Assembly' process, stating that the system constructs an augmented prompt by combining the original user question, system instructions, and retrieved document chunks. This directly answers the query. Chunk 2 mentions technical benefits but does not address prompt construction. Chunk 3 discusses RAG architecture but not the specific query synthesis process. Most relevant information is in Chunk 1, with minimal noise from other chunks.",
+      "score": 4,
+      "passed": true
+    }
+  },
+  {
+    "query": "How does RAG provide cost efficiency compared to fine-tuning?",
+    "faithfulness": {
+      "reasoning": "The generated answer directly quotes the 'Cost Efficiency' bullet point from Chunk 1, which states: 'Injecting dynamic context via prompt engineering is substantially cheaper and faster than fine-tuning weights.' The answer accurately attributes this claim to 'the provided context' without adding any unsupported information or fabrications. All claims are fully supported by the retrieved chunks.",
+      "score": 5,
+      "passed": true
+    },
+    "answer_relevance": {
+      "reasoning": "The generated answer directly addresses the query by explaining that RAG uses dynamic context via prompt engineering, which is cheaper and faster than fine-tuning. It accurately reflects the key points from the reference ground truth without adding irrelevant information. The slight addition of 'according to the provided context' does not detract from the relevance or accuracy.",
+      "score": 5,
+      "passed": true
+    },
+    "context_relevance": {
+      "reasoning": "Chunk 1 explicitly states 'Cost Efficiency: Injecting dynamic context via prompt engineering is substantially cheaper and faster than fine-tuning weights,' directly answering the query. Chunk 2 mentions RAG avoids 'costly fine-tuning' but is less specific. Chunk 3 contains no relevant information about cost efficiency. Two chunks (1 and 2) are relevant, with Chunk 1 being highly focused on the query. Chunk 3 introduces noise.",
+      "score": 4,
+      "passed": true
+    }
+  },
+  {
+    "query": "How does RAG enable auditability and provenance in LLM outputs?",
+    "faithfulness": {
+      "reasoning": "The generated answer directly quotes the 'Auditability & Provenance' bullet point from Chunk 1, which states that 'System outputs can cite exact source document IDs and metadata, enabling transparent verification.' The answer accurately reflects this information without adding any unsupported claims or fabrications. All assertions are explicitly supported by the retrieved context.",
+      "score": 5,
+      "passed": true
+    },
+    "answer_relevance": {
+      "reasoning": "The generated answer directly addresses the query by explaining that RAG enables auditability and provenance through citing exact source document IDs and metadata for transparent verification, which aligns precisely with the reference ground truth. All key elements are present, and the explanation is clear and accurate.",
+      "score": 5,
+      "passed": true
+    },
+    "context_relevance": {
+      "reasoning": "Chunk 1 directly addresses auditability and provenance by stating that 'System outputs can cite exact source document IDs and metadata, enabling transparent verification.' This is highly relevant to the query. Chunks 2 and 3 discuss RAG's general architecture and operational mechanics but do not mention auditability or provenance. While Chunk 1 is relevant, the other chunks are not, resulting in a mix of relevant and irrelevant information.",
+      "score": 3,
+      "passed": false
+    }
+  },
+  {
+    "query": "How can data security and access control be enforced in a RAG pipeline?",
+    "faithfulness": {
+      "reasoning": "The generated answer directly quotes the 'access control rules' and 'filter vector database queries dynamically' mechanism from Chunk 1, which explicitly states 'Access control rules can filter vector database queries dynamically, ensuring users only retrieve information they are authorized to see.' The answer contains no additional claims beyond this directly supported statement from the retrieved context.",
+      "score": 4,
+      "passed": true
+    },
+    "answer_relevance": {
+      "reasoning": "The generated answer directly addresses the query by explaining that data security and access control in a RAG pipeline are enforced through dynamic filtering of vector database queries using access control rules. This matches the reference ground truth precisely, ensuring users only retrieve authorized information. The answer is accurate, concise, and thoroughly covers the key mechanism described in the reference.",
+      "score": 5,
+      "passed": true
+    },
+    "context_relevance": {
+      "reasoning": "Chunk 1 directly addresses data security and access control in RAG pipelines by mentioning 'Access control rules can filter vector database queries dynamically.' This is highly relevant to the query. Chunks 2 and 3 focus on general RAG architecture, data ingestion, and chunking processes without mentioning security or access control mechanisms. While Chunk 1 is relevant, the other chunks provide minimal or no overlap with the query, resulting in a mixed relevance score.",
+      "score": 3,
+      "passed": false
+    }
+  }
+]
